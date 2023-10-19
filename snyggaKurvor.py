@@ -16,7 +16,15 @@ def add_x_line(plt, desired_x):
     plt.axvline(x=desired_x, color='gray', linestyle='--')
     return plt
 
-def plot_excel_data(plt, excel_path, x_to_highlight, image_size, draw_highlight_line=True, use_grid=True, savefig=False, axis_label_font=('sans-serif', 12), text_font=('sans-serif', 10)):
+def plot_excel_data(plt, 
+                    excel_path, 
+                    x_to_highlight, 
+                    image_size, 
+                    draw_highlight_line = True, 
+                    use_grid = True, 
+                    savefig = False, 
+                    axis_label_font = ('sans-serif', 12), 
+                    text_font = ('sans-serif', 10)):
     """
     Plots data from an Excel file using Matplotlib.
 
@@ -131,10 +139,10 @@ def plot_excel_data(plt, excel_path, x_to_highlight, image_size, draw_highlight_
 
 plot_excel_data(plt,
                 'C:/Users/avalonuser/Desktop/filer',
-                x_to_highlight=200,
-                draw_highlight_line=True,
-                use_grid=True,
-                savefig=True,
-                image_size=[12, 6],
-                axis_label_font=('montserrat', 10),
-                text_font=('montserrat', 10))
+                x_to_highlight = 200,
+                image_size = [12, 6],
+                draw_highlight_line = True,
+                use_grid = True,
+                savefig = True,
+                axis_label_font = ('montserrat', 10),
+                text_font = ('montserrat', 10))
