@@ -16,6 +16,19 @@ def add_x_line(plt, desired_x):
     plt.axvline(x=desired_x, color='gray', linestyle='--')
     return plt
 
+def find_closest_value(lst, target):
+    """
+    Find the value in a list that is closest to a given integer.
+
+    Parameters:
+    - lst (list): A list of numerical values.
+    - target (int): The integer to which you want to find the closest value.
+
+    Returns:
+    - int or float: The value from the list that is closest to the target integer.
+    """
+    return min(lst, key=lambda x: abs(x - target))
+
 def plot_excel_data(plt, 
                     excel_path, 
                     xes_to_highlight, 
@@ -83,9 +96,9 @@ def plot_excel_data(plt,
         column_labels = []
 
         for time_column, label in time_columns.items():
-            column_times.append([cell[0].value for cell in ws.iter_rows(min_row=12, max_row=ws.max_row, min_col=time_column, max_col=time_column)])
+            column_times.append([cell[0].value for cell in ws.iter_rows(min_row=13, max_row=ws.max_row, min_col=time_column, max_col=time_column)])
             data_column = time_column + 1
-            column_data.append([cell[0].value for cell in ws.iter_rows(min_row=12, max_row=ws.max_row, min_col=data_column, max_col=data_column)])
+            column_data.append([cell[0].value for cell in ws.iter_rows(min_row=13, max_row=ws.max_row, min_col=data_column, max_col=data_column)])
             column_labels.append(label)
 
         # Create a line graph using matplotlib
@@ -108,11 +121,15 @@ def plot_excel_data(plt,
 
         # Show the graph with the legend
         plt.legend()
-        plt.legend(loc='upper left') # Maybe want it somewhere else? However, it may overlap with the averages
+        plt.legend(loc='upper left') # Maybe want it somewhere else? However, it may overlap with the averages            
 
-
+        # Loop over all given x-values to plot
         for x_to_highlight in xes_to_highlight:
             text_count = 0
+
+            # Find the closest x-value for the given x.
+            x_to_highlight = find_closest_value(x, x_to_highlight)
+
             # Print the y-values for all lines at the desired x-value
             for i, x_value in enumerate(column_times[0]):  # Using the first column for x-values
                 if x_value == x_to_highlight:
@@ -139,9 +156,10 @@ def plot_excel_data(plt,
 
         plt.show()
 
+
 plot_excel_data(plt,
                 'C:/Users/avalonuser/Desktop/filer',
-                xes_to_highlight = [200, 52],
+                xes_to_highlight = [51],
                 image_size = [12, 6],
                 draw_highlight_line = True,
                 use_grid = True,
