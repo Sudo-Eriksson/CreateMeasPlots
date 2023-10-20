@@ -83,9 +83,84 @@ def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12
     # Show the chart
     plt.show()
 
+def create_radar_subplots(file_path):
+    # Open the Excel file
+    excel_file = openpyxl.load_workbook(file_path)
+    sheet = excel_file.active
+
+    # Create empty lists for data
+    names = []
+    min_value = []
+    mean_value = []
+    max_value = []
+
+    # Loop through rows in the Excel sheet and retrieve data
+    for row in sheet.iter_rows(min_row=2, values_only=True):  # Start from row 2 to skip the headers
+        names.append(row[0])
+        min_value.append(row[1])
+        mean_value.append(row[2])
+        max_value.append(row[3])
+
+    num_datapoints = len(names)
+
+    # Set the number of subplots per row
+    subplots_per_row = 4
+
+    # Calculate the number of rows needed
+    num_rows = (num_datapoints + subplots_per_row - 1) // subplots_per_row
+
+    # Create subplots for radar charts
+    fig, axs = plt.subplots(num_rows, subplots_per_row, subplot_kw=dict(polar=True), figsize=(15, 5 * num_rows))
+
+    # Adjust the spacing between subplots
+    plt.subplots_adjust(hspace=0.5)
+
+    # Determine the maximum value for the radar plot
+    max_radar_value = max(max_value)
+
+    for i in range(num_datapoints):
+        # Create a list of labels for each category
+        categories = ['Min', 'Mean', 'Max']
+
+        # Create values for the radar chart
+        values = [min_value[i], mean_value[i], max_value[i]]
+
+        # Duplicate the first value to close the circular graph
+        values += values[:1]
+
+        # Calculate angles for each category
+        angles = np.linspace(0, 2 * np.pi, len(categories), endpoint=False).tolist()
+
+        # Add the first value at the end to complete the circular plot
+        angles += angles[:1]
+
+        # Create the radar chart
+        row = i // subplots_per_row
+        col = i % subplots_per_row
+        ax = axs[row, col]
+        ax.fill(angles, values, 'b', alpha=0.1)
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(categories)
+        ax.set_yticklabels([])
+        ax.set_title(names[i])
+
+        # Set the same maximum value for all radar plots
+        ax.set_rmax(max_radar_value)
+
+    # Remove any empty subplots
+    for i in range(num_datapoints, num_rows * subplots_per_row):
+        row = i // subplots_per_row
+        col = i % subplots_per_row
+        fig.delaxes(axs[row, col])
+
+    # Display the radar subplots
+    plt.show()
+
 # Example usage with a custom figure size (e.g., 12x8 inches)
 create_bar_chart('C:/Users/avalonuser/Desktop/dummy_stapel.xlsx', 
                  figure_size = (16, 8),
                  savefig = True,
                  text_size=8, 
                  text_font='serif')
+
+create_radar_subplots('C:/Users/avalonuser/Desktop/dummy_stapel.xlsx')

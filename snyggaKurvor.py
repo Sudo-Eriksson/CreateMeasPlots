@@ -18,7 +18,7 @@ def add_x_line(plt, desired_x):
 
 def plot_excel_data(plt, 
                     excel_path, 
-                    x_to_highlight, 
+                    xes_to_highlight, 
                     image_size, 
                     draw_highlight_line = True, 
                     use_grid = True, 
@@ -110,23 +110,25 @@ def plot_excel_data(plt,
         plt.legend()
         plt.legend(loc='upper left') # Maybe want it somewhere else? However, it may overlap with the averages
 
-        text_count = 0
-        # Print the y-values for all lines at the desired x-value
-        for i, x_value in enumerate(column_times[0]):  # Using the first column for x-values
-            if x_value == x_to_highlight:
-                for j, column_label in enumerate(column_labels):
-                    y_value = column_data[j][i]
 
-                    text_x = x[-1] - 50 # Adjust horizontal offset
-                    text_y = 15 + (text_count * 8)  # Adjust vertical offset
+        for x_to_highlight in xes_to_highlight:
+            text_count = 0
+            # Print the y-values for all lines at the desired x-value
+            for i, x_value in enumerate(column_times[0]):  # Using the first column for x-values
+                if x_value == x_to_highlight:
+                    for j, column_label in enumerate(column_labels):
+                        y_value = column_data[j][i]
 
-                    color = plt.gca().get_lines()[j].get_color()
-                    plt.text(text_x, text_y, f'x = {x_to_highlight:.3g}, y = {y_value:.3g}', color=color, va='bottom', fontname=text_font[0], fontsize=text_font[1])
-                    text_count += 1
+                        text_x = x[-1] - 50 # Adjust horizontal offset
+                        text_y = 15 + (text_count * 8)  # Adjust vertical offset
 
-        # Only draw the line if the user wants it
-        if draw_highlight_line:
-            plt = add_x_line(plt, x_to_highlight)
+                        color = plt.gca().get_lines()[j].get_color()
+                        plt.text(x_to_highlight + 2, text_y, f'x={x_to_highlight:.3g}, y={y_value:.3g}', color=color, va='bottom', fontname=text_font[0], fontsize=text_font[1])
+                        text_count += 1
+
+            # Only draw the line if the user wants it
+            if draw_highlight_line:
+                plt = add_x_line(plt, x_to_highlight)
 
         if use_grid:
             plt.grid()
@@ -139,7 +141,7 @@ def plot_excel_data(plt,
 
 plot_excel_data(plt,
                 'C:/Users/avalonuser/Desktop/filer',
-                x_to_highlight = 200,
+                xes_to_highlight = [200, 52],
                 image_size = [12, 6],
                 draw_highlight_line = True,
                 use_grid = True,
