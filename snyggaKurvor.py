@@ -30,9 +30,9 @@ def find_closest_value(lst, target):
     return min(lst, key=lambda x: abs(x - target))
 
 def plot_excel_data(plt, 
-                    excel_path, 
-                    xes_to_highlight, 
+                    excel_path,
                     image_size, 
+                    xes_to_highlight = [], 
                     draw_highlight_line = True, 
                     use_grid = True, 
                     savefig = False, 
@@ -159,10 +159,11 @@ def plot_excel_data(plt,
 
 plot_excel_data(plt,
                 'C:/Users/avalonuser/Desktop/filer',
-                xes_to_highlight = [51],
                 image_size = [12, 6],
+                xes_to_highlight = [51],
                 draw_highlight_line = True,
                 use_grid = True,
                 savefig = True,
                 axis_label_font = ('montserrat', 10),
                 text_font = ('montserrat', 10))
+ 

@@ -2,6 +2,13 @@ import openpyxl
 import matplotlib.pyplot as plt
 import numpy as np
 
+def find_start_row(sheet):
+    # Loop through rows in the Excel sheet and find the first row with a number in column 2
+    for row_num, row in enumerate(sheet.iter_rows(min_row=1, max_row=sheet.max_row, values_only=True), start=1):
+        if isinstance(row[1], (int, float)):
+            return row_num
+    return None
+
 def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12, text_font='sans-serif'):
     """
     Create a bar chart from data in an Excel file.
@@ -20,14 +27,20 @@ def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12
     excel_file = openpyxl.load_workbook(file_path)
     sheet = excel_file.active
 
+    # Find the starting row
+    start_row = find_start_row(sheet)
+    if start_row is None:
+        print("No numeric data found in column 2.")
+        return
+
     # Create empty lists for data
     names = []
     min_value = []
     mean_value = []
     max_value = []
 
-    # Loop through rows in the Excel sheet and retrieve data
-    for row in sheet.iter_rows(min_row=1, values_only=True):  # Start from row 2 to skip the headers
+    # Loop through rows in the Excel sheet starting from the identified row
+    for row in sheet.iter_rows(min_row=start_row, values_only=True):
         names.append(row[0])
         min_value.append(row[1])
         mean_value.append(row[2])
