@@ -87,7 +87,6 @@ def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12
         plt.xticks(x, names)
 
         # Add labels and a legend
-        plt.xlabel('Runs')
         plt.ylabel('Temperature [°C]')
         plt.title(sheet)
         plt.legend()
