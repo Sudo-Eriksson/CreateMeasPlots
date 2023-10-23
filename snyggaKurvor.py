@@ -65,7 +65,7 @@ def plot_excel_data(plt,
 
     if ".xlsx" in excel_path:
         excel_list.append(excel_path)
-        excel_filename_list.append(excel_path.split("/")[-1])
+        excel_filename_list.append(excel_path.split("/")[-1].split("\\")[-1])
     else:
         # Iterate over all files in the directory
         for root, dirs, files in os.walk(excel_path):
@@ -101,8 +101,8 @@ def plot_excel_data(plt,
             column_data.append([cell[0].value for cell in ws.iter_rows(min_row=13, max_row=ws.max_row, min_col=data_column, max_col=data_column)])
             column_labels.append(label)
 
-        # Create a line graph using matplotlib
-        plt.figure(figsize=(image_size[0], image_size[1]))
+        # Create a line graph using matplotlib with custom figsize and tight layout.
+        plt.figure(figsize=(image_size[0], image_size[1]), tight_layout=True)
 
         # Plot the data from the selected columns and use the labels from the right as the legend
         for i in range(len(column_data)):
@@ -158,12 +158,12 @@ def plot_excel_data(plt,
 
 
 plot_excel_data(plt,
-                'C:/Users/avalonuser/Desktop/filer',
-                image_size = [12, 6],
+                r'C:\Users\avalonuser\Desktop\filer',
+                image_size = [6, 3],
                 xes_to_highlight = [51],
                 draw_highlight_line = True,
                 use_grid = True,
                 savefig = True,
                 axis_label_font = ('montserrat', 10),
-                text_font = ('montserrat', 10))
+                text_font = ('montserrat', 8))
  
