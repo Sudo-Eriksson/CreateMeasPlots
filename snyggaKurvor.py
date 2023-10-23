@@ -116,6 +116,8 @@ def plot_excel_data(plt,
 
         # Set the chart title and axis labels
         plt.title(filename)
+        print(filename)
+
         plt.xlabel('Time [s]', fontname=axis_label_font[0], fontsize=axis_label_font[1])
         plt.ylabel('Temperature [°C]', fontname=axis_label_font[0], fontsize=axis_label_font[1])
 
@@ -136,12 +138,13 @@ def plot_excel_data(plt,
                     for j, column_label in enumerate(column_labels):
                         y_value = column_data[j][i]
 
-                        text_x = x[-1] - 50 # Adjust horizontal offset
                         text_y = 15 + (text_count * 8)  # Adjust vertical offset
 
                         color = plt.gca().get_lines()[j].get_color()
                         plt.text(x_to_highlight + 2, text_y, f'x={x_to_highlight:.3g}, y={y_value:.3g}', color=color, va='bottom', fontname=text_font[0], fontsize=text_font[1])
                         text_count += 1
+
+                        print(f'x={x_to_highlight:.3g}, y={y_value:.3g}')
 
             # Only draw the line if the user wants it
             if draw_highlight_line:
@@ -153,17 +156,20 @@ def plot_excel_data(plt,
         if savefig:
             path = excel_file.split(".xlsx")[0]
             plt.savefig(f'{path}.png', transparent=True)
+            print(f'Saved file: {path}.png')
 
         plt.show()
+
+        print("---------------------")
 
 
 plot_excel_data(plt,
                 r'C:\Users\avalonuser\Desktop\filer',
                 image_size = [6, 3],
-                xes_to_highlight = [51],
+                xes_to_highlight = [],
                 draw_highlight_line = True,
                 use_grid = True,
                 savefig = True,
-                axis_label_font = ('montserrat', 10),
-                text_font = ('montserrat', 8))
+                axis_label_font = ('calibri', 10),
+                text_font = ('calibri', 8))
  
