@@ -107,7 +107,7 @@ def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12
 
         if savefig:
                 path = file_path.split(".xlsx")[0]
-                plt.savefig(f'{path}.png', transparent=True)
+                plt.savefig(f'{path}_{sheet}.png', transparent=True)
 
         # Show the chart
         plt.show()
