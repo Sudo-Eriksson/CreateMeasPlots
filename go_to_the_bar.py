@@ -244,7 +244,8 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
             # Print max value below the vertical line
             ax.text(i, min_value[i] - 0.5, f"{min_value[i]:.3g}", ha='center', va='top', color='black',
                     fontsize=text_size, family=text_font)
-
+        
+        ax.set_xlabel('')  # Remove x-axis label
         plt.xticks(rotation=45, ha='right')
         filename = file_path.split("/")[-1].split("\\")[-1]
         plt.ylabel('Temperature [°C]')
