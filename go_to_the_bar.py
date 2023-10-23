@@ -223,8 +223,7 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
 
         data = pd.DataFrame({'Names': names, 'Min': min_value, 'Mean': mean_value, 'Max': max_value})
 
-        plt.figure(figsize=figure_size)
-        plt.tight_layout()
+        plt.figure(figsize=figure_size, tight_layout=True)
 
         sns.set_style("whitegrid")
         ax = sns.barplot(x='Names', y='Mean', data=data, color='royalblue', alpha=0.7, label='Mean')
@@ -260,7 +259,7 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
 
 # Example usage
 create_seaborn_combined_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
-                                  figure_size = (16, 8),
+                                  figure_size = (8, 7),
                                   savefig = True,
                                   text_size=10, 
                                   text_font='serif')
