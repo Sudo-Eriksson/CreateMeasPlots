@@ -1,6 +1,9 @@
 import openpyxl
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
+import pandas as pd
+
 
 def find_start_row(sheet):
     """
@@ -58,13 +61,13 @@ def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12
             max_value.append(row[3])
 
         num_names = len(names)
-        width = 0.2
+        width = 0.175
         spacing = 0.2
         x = np.arange(num_names)
 
         plt.figure(figsize=figure_size)
 
-
+        # Only create subplot if this bool is true
         if create_score:
             ax1 = plt.subplot(211)  # Skapa den första subplotten (2 rader, 1 kolumn, första plats)
         
@@ -88,6 +91,7 @@ def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12
             plt.text(x[i] + spacing - delta, max_value[i], f"{max_value[i]:.3g}", ha='center', va='bottom',
                     color='firebrick', fontsize=text_size, family=text_font)
 
+        # Create score subplot if wanted by user.
         if create_score:
             # Lägg till en subplott för (max - min) / mean under stapeldiagrammet
             ax2 = plt.subplot(212, sharex=ax1)  # Skapa den andra subplotten (2 rader, 1 kolumn, andra plats)
@@ -195,12 +199,76 @@ def create_radar_subplots(file_path):
     # Display the radar subplots
     plt.show()
 
-# Example usage with a custom figure size (e.g., 12x8 inches)
-create_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
-                 figure_size = (16, 8),
-                 savefig = True,
-                 text_size=8, 
-                 text_font='serif',
-                 create_score = False)
+def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12, text_font='sans-serif'):
+    # Open the Excel file
+    excel_file = openpyxl.load_workbook(file_path)
 
-# create_radar_subplots('C:/Users/avalonuser/Desktop/dummy_stapel.xlsx')
+    for sheet in excel_file.sheetnames:
+        current_sheet = excel_file[sheet]
+        start_row = find_start_row(current_sheet)
+        if start_row is None:
+            print("No numeric data found in column 2.")
+            return
+
+        names = []
+        min_value = []
+        mean_value = []
+        max_value = []
+
+        for row in current_sheet.iter_rows(min_row=2, values_only=True):
+            names.append(row[0])
+            min_value.append(row[1])
+            mean_value.append(row[2])
+            max_value.append(row[3])
+
+        data = pd.DataFrame({'Names': names, 'Min': min_value, 'Mean': mean_value, 'Max': max_value})
+
+        plt.figure(figsize=figure_size)
+        plt.tight_layout()
+
+        sns.set_style("whitegrid")
+        ax = sns.barplot(x='Names', y='Mean', data=data, color='royalblue', alpha=0.7, label='Mean')
+        sns.despine(left=True)
+
+        # Plot vertical lines for Min and Max
+        for i in range(len(names)):
+            plt.vlines(x=i, ymin=min_value[i], ymax=max_value[i], color='black', linewidth=2)
+
+            # Print mean value above the bar
+            ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color='royalblue',
+                    fontsize=text_size, family=text_font)
+
+            # Print min value above the vertical line
+            ax.text(i, max_value[i] + 0.5, f"{max_value[i]:.3g}", ha='center', va='bottom', color='black',
+                    fontsize=text_size, family=text_font)
+
+            # Print max value below the vertical line
+            ax.text(i, min_value[i] - 0.5, f"{min_value[i]:.3g}", ha='center', va='top', color='black',
+                    fontsize=text_size, family=text_font)
+
+        plt.xticks(rotation=45, ha='right')
+        filename = file_path.split("/")[-1].split("\\")[-1]
+        plt.ylabel('Temperature [°C]')
+        plt.title(f'{filename}: {sheet}')
+        if savefig:
+            path = file_path.split(".xlsx")[0]
+            plt.savefig(f'{path}_{sheet}.png', transparent=True)
+            print(f'Saved file: {path}_{sheet}.png')
+
+        plt.show()
+
+
+# Example usage
+create_seaborn_combined_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
+                                  figure_size = (16, 8),
+                                  savefig = True,
+                                  text_size=10, 
+                                  text_font='serif')
+
+# Example usage with a custom figure size (e.g., 12x8 inches)
+#create_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
+#                 figure_size = (16, 8),
+#                 savefig = True,
+#                 text_size=8, 
+#                 text_font='serif',
+#                 create_score = False)
