@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import pandas as pd
-
+from fontTools.ttLib import TTFont
+font = TTFont(r'c:\USERS\10486PAOL\APPDATA\LOCAL\MICROSOFT\WINDOWS\FONTS\MONTSERRAT-VARIABLEFONT_WGHT.TTF')
 
 def find_start_row(sheet):
     """
@@ -226,7 +227,7 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
         plt.figure(figsize=figure_size, tight_layout=True)
 
         sns.set_style("whitegrid")
-        ax = sns.barplot(x='Names', y='Mean', data=data, color='royalblue', alpha=0.7, label='Mean')
+        ax = sns.barplot(x='Names', y='Mean', data=data, color='royalblue', alpha=0.7)
         sns.despine(left=True)
 
         # Plot vertical lines for Min and Max
@@ -242,11 +243,11 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
                     fontsize=text_size, family=text_font)
 
             # Print max value below the vertical line
-            ax.text(i, min_value[i] - 0.5, f"{min_value[i]:.3g}", ha='center', va='top', color='black',
+            ax.text(i, min_value[i] - 2, f"{min_value[i]:.3g}", ha='center', va='top', color='black',
                     fontsize=text_size, family=text_font)
         
         ax.set_xlabel('')  # Remove x-axis label
-        plt.xticks(rotation=45, ha='right')
+        plt.xticks(rotation=30, ha='right')
         filename = file_path.split("/")[-1].split("\\")[-1]
         plt.ylabel('Temperature [°C]')
         plt.title(f'{filename}: {sheet}')
@@ -259,11 +260,11 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
 
 
 # Example usage
-create_seaborn_combined_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
-                                  figure_size = (8, 7),
+create_seaborn_combined_bar_chart(r'O:\Orders\256\Simulations\Flow\Utredning fas 2b\Utökad Coil carrier\Ytter- och centrumtemp.xlsx',
+                                  figure_size = (16, 4.5),
                                   savefig = True,
                                   text_size=10, 
-                                  text_font='serif')
+                                  text_font='Montserrat')
 
 # Example usage with a custom figure size (e.g., 12x8 inches)
 #create_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
