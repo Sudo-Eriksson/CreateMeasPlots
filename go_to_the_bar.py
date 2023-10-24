@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import pandas as pd
-from fontTools.ttLib import TTFont
-font = TTFont(r'c:\USERS\10486PAOL\APPDATA\LOCAL\MICROSOFT\WINDOWS\FONTS\MONTSERRAT-VARIABLEFONT_WGHT.TTF')
+from matplotlib.font_manager import FontProperties
+
 
 def find_start_row(sheet):
     """
@@ -81,7 +81,8 @@ def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12
         filename = file_path.split("/")[-1].split("\\")[-1]
         plt.ylabel('Temperature [°C]')
         plt.title(f'{filename}: {sheet}')
-        plt.legend()
+        legend = plt.legend()
+        legend.get_frame().set_alpha(0.5)  # You can adjust the alpha (0.0 to 1.0) to control the level of transparency
         delta = 0.00
 
         for i in range(num_names):
@@ -100,7 +101,8 @@ def create_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12
             ratio = [(((max_val - min_val) + (max_val - mean_val) + (mean_val - min_val) )/ 3)/(mean_val) for max_val, min_val, mean_val in zip(max_value, min_value, mean_value)]
             plt.bar(x, ratio, width=width, label='Evenness and level score', color='royalblue')
             plt.ylabel('Evenness and level score')
-            plt.legend()
+            legend = plt.legend()
+            legend.get_frame().set_alpha(0.5)  # You can adjust the alpha (0.0 to 1.0) to control the level of transparency
             plt.grid(axis='y', linestyle='--', alpha=0.7)
 
             for i in range(num_names):
@@ -200,7 +202,7 @@ def create_radar_subplots(file_path):
     # Display the radar subplots
     plt.show()
 
-def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12, text_font='sans-serif'):
+def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12, bar_color='royalblue'):
     # Open the Excel file
     excel_file = openpyxl.load_workbook(file_path)
 
@@ -222,29 +224,48 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
             mean_value.append(row[2])
             max_value.append(row[3])
 
-        data = pd.DataFrame({'Names': names, 'Min': min_value, 'Mean': mean_value, 'Max': max_value})
+        onlyMean = False
+        if all(item is None for item in max_value):
+            print("FOUND FILE WITH MEANS ONLY.")
+            onlyMean = True
+            mean_value = min_value # Mean should be min because the mean values are at the place where min usualy are.
+            data = pd.DataFrame({'Names': names, 'Mean': mean_value}) 
+        else:
+            data = pd.DataFrame({'Names': names, 'Min': min_value, 'Mean': mean_value, 'Max': max_value})
 
         plt.figure(figsize=figure_size, tight_layout=True)
 
         sns.set_style("whitegrid")
-        ax = sns.barplot(x='Names', y='Mean', data=data, color='royalblue', alpha=0.7)
+        ax = sns.barplot(x='Names', y='Mean', data=data, color=bar_color, alpha=0.7)
         sns.despine(left=True)
+
+        # Set font path
+        font_path = r'C:\Users\avalonuser\Downloads\Montserrat\static\Montserrat-Regular.ttf'
+        font = FontProperties(fname=font_path)
 
         # Plot vertical lines for Min and Max
         for i in range(len(names)):
-            plt.vlines(x=i, ymin=min_value[i], ymax=max_value[i], color='black', linewidth=2)
 
-            # Print mean value above the bar
-            ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color='royalblue',
-                    fontsize=text_size, family=text_font)
+            # Only print vertical lines and values for min and max if min and max are present in data file.
+            if onlyMean:
+                # Print mean value above the bar
+                ax.text(i, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=bar_color,
+                        fontsize=text_size, fontproperties=font)
+            else:
+                # Print mean value above the bar
+                ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=bar_color,
+                        fontsize=text_size, fontproperties=font)
 
-            # Print min value above the vertical line
-            ax.text(i, max_value[i] + 0.5, f"{max_value[i]:.3g}", ha='center', va='bottom', color='black',
-                    fontsize=text_size, family=text_font)
+                # Draw vertical lines 
+                plt.vlines(x=i, ymin=min_value[i], ymax=max_value[i], color='black', linewidth=2)
 
-            # Print max value below the vertical line
-            ax.text(i, min_value[i] - 2, f"{min_value[i]:.3g}", ha='center', va='top', color='black',
-                    fontsize=text_size, family=text_font)
+                # Print min value above the vertical line
+                ax.text(i, max_value[i] + 0.5, f"{max_value[i]:.3g}", ha='center', va='bottom', color='black',
+                        fontsize=text_size, fontproperties=font)
+
+                # Print max value below the vertical line
+                ax.text(i, min_value[i] - 2, f"{min_value[i]:.3g}", ha='center', va='top', color='black',
+                        fontsize=text_size, fontproperties=font)
         
         ax.set_xlabel('')  # Remove x-axis label
         plt.xticks(rotation=30, ha='right')
@@ -260,11 +281,11 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
 
 
 # Example usage
-create_seaborn_combined_bar_chart(r'O:\Orders\256\Simulations\Flow\Utredning fas 2b\Utökad Coil carrier\Ytter- och centrumtemp.xlsx',
+create_seaborn_combined_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
                                   figure_size = (16, 4.5),
                                   savefig = True,
-                                  text_size=10, 
-                                  text_font='Montserrat')
+                                  text_size=10,
+                                  bar_color='red')
 
 # Example usage with a custom figure size (e.g., 12x8 inches)
 #create_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',

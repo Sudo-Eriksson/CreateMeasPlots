@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import openpyxl
 import os
+from matplotlib.font_manager import FontProperties
 
 def add_x_line(plt, desired_x):
     """
@@ -36,8 +37,8 @@ def plot_excel_data(plt,
                     draw_highlight_line = True, 
                     use_grid = True, 
                     savefig = False, 
-                    axis_label_font = ('sans-serif', 12), 
-                    text_font = ('sans-serif', 10)):
+                    axis_label_font_size = 12, 
+                    text_font_size = 10):
     """
     Plots data from an Excel file using Matplotlib.
 
@@ -104,6 +105,10 @@ def plot_excel_data(plt,
         # Create a line graph using matplotlib with custom figsize and tight layout.
         plt.figure(figsize=(image_size[0], image_size[1]), tight_layout=True)
 
+        # Set font path
+        font_path = r'C:\Users\avalonuser\Downloads\Montserrat\static\Montserrat-Regular.ttf'
+        font = FontProperties(fname=font_path)
+
         # Plot the data from the selected columns and use the labels from the right as the legend
         for i in range(len(column_data)):
             x = column_times[i]
@@ -112,18 +117,19 @@ def plot_excel_data(plt,
 
             last_value = y[-1]
             color = plt.gca().get_lines()[-1].get_color()
-            plt.text(x[-1], last_value, str(int(last_value)), color=color, va='bottom', fontname=text_font[0], fontsize=text_font[1])
+            plt.text(x[-1], last_value, str(int(last_value)), color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
 
         # Set the chart title and axis labels
         plt.title(filename)
         print(filename)
 
-        plt.xlabel('Time [s]', fontname=axis_label_font[0], fontsize=axis_label_font[1])
-        plt.ylabel('Temperature [°C]', fontname=axis_label_font[0], fontsize=axis_label_font[1])
+        plt.xlabel('Time [s]', fontproperties=font, fontsize=axis_label_font_size)
+        plt.ylabel('Temperature [°C]', fontproperties=font, fontsize=axis_label_font_size)
 
         # Show the graph with the legend
-        plt.legend()
-        plt.legend(loc='upper left') # Maybe want it somewhere else? However, it may overlap with the averages            
+        legend = plt.legend()
+        plt.legend(loc='upper left') # Maybe want it somewhere else? However, it may overlap with the averages
+        legend.get_frame().set_alpha(0.5)  # You can adjust the alpha (0.0 to 1.0) to control the level of transparency
 
         # Loop over all given x-values to plot
         for x_to_highlight in xes_to_highlight:
@@ -141,7 +147,7 @@ def plot_excel_data(plt,
                         text_y = 15 + (text_count * 8)  # Adjust vertical offset
 
                         color = plt.gca().get_lines()[j].get_color()
-                        plt.text(x_to_highlight + 2, text_y, f'x={x_to_highlight:.3g}, y={y_value:.3g}', color=color, va='bottom', fontname=text_font[0], fontsize=text_font[1])
+                        plt.text(x_to_highlight + 2, text_y, f'x={x_to_highlight:.3g}, y={y_value:.3g}', color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
                         text_count += 1
 
                         print(f'x={x_to_highlight:.3g}, y={y_value:.3g}')
@@ -170,6 +176,6 @@ plot_excel_data(plt,
                 draw_highlight_line = True,
                 use_grid = True,
                 savefig = True,
-                axis_label_font = ('calibri', 10),
-                text_font = ('calibri', 8))
+                axis_label_font_size = 10,
+                text_font_size = 8)
  
