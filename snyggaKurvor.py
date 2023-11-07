@@ -147,7 +147,7 @@ def plot_excel_data(plt,
                         text_y = 15 + (text_count * 8)  # Adjust vertical offset
 
                         color = plt.gca().get_lines()[j].get_color()
-                        plt.text(x_to_highlight + 2, text_y, f'x={x_to_highlight:.3g}, y={y_value:.3g}', color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
+                        plt.text(x_to_highlight + 2, text_y, f'{y_value:.3g}', color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
                         text_count += 1
 
                         print(f'x={x_to_highlight:.3g}, y={y_value:.3g}')
@@ -172,7 +172,7 @@ def plot_excel_data(plt,
 plot_excel_data(plt,
                 r'C:\Users\avalonuser\Desktop\filer',
                 image_size = [6, 3],
-                xes_to_highlight = [],
+                xes_to_highlight = [132],
                 draw_highlight_line = True,
                 use_grid = True,
                 savefig = True,
