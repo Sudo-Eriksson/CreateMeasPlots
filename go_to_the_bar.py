@@ -220,9 +220,14 @@ def create_seaborn_combined_bar_chart(file_path, high_bar="", high_bar_color="",
 
         for row in current_sheet.iter_rows(min_row=2, values_only=True):
             names.append(row[0])
-            min_value.append(row[1])
-            mean_value.append(row[2])
-            max_value.append(row[3])
+            if row[1] == None:
+                min_value.append(0)
+                mean_value.append(0)
+                max_value.append(0)
+            else:
+                min_value.append(row[1])
+                mean_value.append(row[2])
+                max_value.append(row[3])
 
         onlyMean = False
         if all(item is None for item in max_value):
@@ -264,24 +269,27 @@ def create_seaborn_combined_bar_chart(file_path, high_bar="", high_bar_color="",
                 ax.text(i, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=bar_color,
                         fontsize=text_size, fontproperties=font)
             else:
-                # Print mean value above the bar
-                if names[i] == high_bar:
-                    ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=high_bar_color,
-                        fontsize=text_size, fontproperties=font)
-                else:
-                    ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=bar_color,
+                if not mean_value[i] == 0:
+                    # Print mean value above the bar
+                    if names[i] == high_bar:
+                        ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=high_bar_color,
                             fontsize=text_size, fontproperties=font)
+                    else:
+                        ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=bar_color,
+                                fontsize=text_size, fontproperties=font)
 
                 # Draw vertical lines 
                 plt.vlines(x=i, ymin=min_value[i], ymax=max_value[i], color='black', linewidth=2)
 
                 # Print min value above the vertical line
-                ax.text(i, max_value[i] + 0.5, f"{max_value[i]:.3g}", ha='center', va='bottom', color='black',
-                        fontsize=text_size, fontproperties=font)
+                if not min_value[i] == 0:
+                    ax.text(i, max_value[i] + 0.5, f"{max_value[i]:.3g}", ha='center', va='bottom', color='black',
+                            fontsize=text_size, fontproperties=font)
 
                 # Print max value below the vertical line
-                ax.text(i, min_value[i] - 2, f"{min_value[i]:.3g}", ha='center', va='top', color='black',
-                        fontsize=text_size, fontproperties=font)
+                if not max_value[i] == 0:
+                    ax.text(i, min_value[i] - 2, f"{min_value[i]:.3g}", ha='center', va='top', color='black',
+                            fontsize=text_size, fontproperties=font)
         
         ax.set_xlabel('')  # Remove x-axis label
         plt.xticks(rotation=30, ha='right')
@@ -297,9 +305,7 @@ def create_seaborn_combined_bar_chart(file_path, high_bar="", high_bar_color="",
 
 
 # Example usage
-create_seaborn_combined_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
-                                  high_bar="G7 inter",
-                                  high_bar_color = "green",
+create_seaborn_combined_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp (1).xlsx',
                                   figure_size = (16, 4.5),
                                   savefig = True,
                                   text_size=10,
