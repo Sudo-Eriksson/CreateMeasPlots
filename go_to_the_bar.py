@@ -202,7 +202,7 @@ def create_radar_subplots(file_path):
     # Display the radar subplots
     plt.show()
 
-def create_seaborn_combined_bar_chart(file_path, high_bar="", high_bar_color="", figure_size=(10, 6), savefig=False, text_size=12, bar_color='royalblue'):
+def create_seaborn_combined_bar_chart(file_path, high_bar=-1, high_bar_color="", figure_size=(10, 6), savefig=False, text_size=12, bar_color='royalblue'):
     # Open the Excel file
     excel_file = openpyxl.load_workbook(file_path)
 
@@ -244,9 +244,9 @@ def create_seaborn_combined_bar_chart(file_path, high_bar="", high_bar_color="",
         ax = sns.barplot(x='Names', y='Mean', data=data, color=bar_color, alpha=0.7)
         sns.despine(left=True)
         
-        if not high_bar == "":
+        if not high_bar == -1:
             # Choose the bar you want to change the color for (e.g., the second bar)
-            bar_to_change = names.index(high_bar)  # Index of the bar to change (zero-based)
+            bar_to_change = high_bar  # Index of the bar to change (zero-based)
             # Get the list of bars in the plot
             bars = ax.patches
             # Get the color of the bar you want to change
@@ -271,7 +271,7 @@ def create_seaborn_combined_bar_chart(file_path, high_bar="", high_bar_color="",
             else:
                 if not mean_value[i] == 0:
                     # Print mean value above the bar
-                    if names[i] == high_bar:
+                    if names[i] == names[high_bar]:
                         ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=high_bar_color,
                             fontsize=text_size, fontproperties=font)
                     else:
@@ -307,6 +307,8 @@ def create_seaborn_combined_bar_chart(file_path, high_bar="", high_bar_color="",
 # Example usage
 create_seaborn_combined_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp (1).xlsx',
                                   figure_size = (16, 4.5),
+                                  high_bar = 1,
+                                  high_bar_color = "green",
                                   savefig = True,
                                   text_size=10,
                                   bar_color='red')
