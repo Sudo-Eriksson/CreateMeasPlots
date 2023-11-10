@@ -202,7 +202,7 @@ def create_radar_subplots(file_path):
     # Display the radar subplots
     plt.show()
 
-def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=False, text_size=12, bar_color='royalblue'):
+def create_seaborn_combined_bar_chart(file_path, high_bar="", high_bar_color="", figure_size=(10, 6), savefig=False, text_size=12, bar_color='royalblue'):
     # Open the Excel file
     excel_file = openpyxl.load_workbook(file_path)
 
@@ -238,6 +238,18 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
         sns.set_style("whitegrid")
         ax = sns.barplot(x='Names', y='Mean', data=data, color=bar_color, alpha=0.7)
         sns.despine(left=True)
+        
+        if not high_bar == "":
+            # Choose the bar you want to change the color for (e.g., the second bar)
+            bar_to_change = names.index(high_bar)  # Index of the bar to change (zero-based)
+            # Get the list of bars in the plot
+            bars = ax.patches
+            # Get the color of the bar you want to change
+            bar_color = bars[bar_to_change].get_facecolor()
+            # Specify the color you want to change it to
+            new_color = high_bar_color  # Change it to the desired color
+            # Change the color of the specified bar
+            bars[bar_to_change].set_facecolor(new_color)
 
         # Set font path
         font_path = r'C:\Users\avalonuser\Downloads\Montserrat\static\Montserrat-Regular.ttf'
@@ -253,8 +265,12 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
                         fontsize=text_size, fontproperties=font)
             else:
                 # Print mean value above the bar
-                ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=bar_color,
+                if names[i] == high_bar:
+                    ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=high_bar_color,
                         fontsize=text_size, fontproperties=font)
+                else:
+                    ax.text(i + 0.2, mean_value[i], f"{mean_value[i]:.3g}", ha='center', va='bottom', color=bar_color,
+                            fontsize=text_size, fontproperties=font)
 
                 # Draw vertical lines 
                 plt.vlines(x=i, ymin=min_value[i], ymax=max_value[i], color='black', linewidth=2)
@@ -282,6 +298,8 @@ def create_seaborn_combined_bar_chart(file_path, figure_size=(10, 6), savefig=Fa
 
 # Example usage
 create_seaborn_combined_bar_chart(r'C:\Users\avalonuser\Desktop\Ytter- och centrumtemp.xlsx',
+                                  high_bar="G7 inter",
+                                  high_bar_color = "green",
                                   figure_size = (16, 4.5),
                                   savefig = True,
                                   text_size=10,
