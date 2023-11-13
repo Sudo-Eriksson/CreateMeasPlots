@@ -219,15 +219,17 @@ def create_seaborn_combined_bar_chart(file_path, high_bar=[], high_bar_color=[],
         max_value = []
 
         for row in current_sheet.iter_rows(min_row=2, values_only=True):
-            names.append(row[0])
-            if row[1] == None:
-                min_value.append(0)
-                mean_value.append(0)
-                max_value.append(0)
-            else:
-                min_value.append(row[1])
-                mean_value.append(row[2])
-                max_value.append(row[3])
+            # Handle if there are trash in the cells...
+            if not (row[0] == None):
+                names.append(row[0])
+                if row[1] == None:
+                    min_value.append(0)
+                    mean_value.append(0)
+                    max_value.append(0)
+                else:
+                    min_value.append(row[1])
+                    mean_value.append(row[2])
+                    max_value.append(row[3])
 
         onlyMean = False
         if all(item is None for item in max_value):
