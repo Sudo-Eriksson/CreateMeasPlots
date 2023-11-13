@@ -97,9 +97,9 @@ def plot_excel_data(plt,
         column_labels = []
 
         for time_column, label in time_columns.items():
-            column_times.append([cell[0].value for cell in ws.iter_rows(min_row=13, max_row=ws.max_row, min_col=time_column, max_col=time_column)])
+            column_times.append([cell[0].value for cell in ws.iter_rows(min_row=5, max_row=ws.max_row, min_col=time_column, max_col=time_column)])
             data_column = time_column + 1
-            column_data.append([cell[0].value for cell in ws.iter_rows(min_row=13, max_row=ws.max_row, min_col=data_column, max_col=data_column)])
+            column_data.append([cell[0].value for cell in ws.iter_rows(min_row=5, max_row=ws.max_row, min_col=data_column, max_col=data_column)])
             column_labels.append(label)
 
         # Create a line graph using matplotlib with custom figsize and tight layout.
@@ -111,8 +111,12 @@ def plot_excel_data(plt,
 
         # Plot the data from the selected columns and use the labels from the right as the legend
         for i in range(len(column_data)):
-            x = column_times[i]
-            y = column_data[i]
+
+            x = [z for z in column_times[i] if z is not None]
+            y = [z for z in column_data[i] if z is not None]
+
+            #x = column_times[i]
+            #y = column_data[i]
             plt.plot(x, y, label=column_labels[i])
 
             last_value = y[-1]
@@ -170,8 +174,8 @@ def plot_excel_data(plt,
 
 
 plot_excel_data(plt,
-                r'C:\Users\avalonuser\Desktop\filer',
-                image_size = [6, 3],
+                r'C:\Users\avalonuser\Downloads\TP Medel olika kylvattentemp.xlsx',
+                image_size = [12, 8],
                 xes_to_highlight = [132],
                 draw_highlight_line = True,
                 use_grid = True,
