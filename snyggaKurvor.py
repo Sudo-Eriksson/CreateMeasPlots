@@ -30,6 +30,15 @@ def find_closest_value(lst, target):
     """
     return min(lst, key=lambda x: abs(x - target))
 
+
+def find_first_numeric_row(ws, column_index):
+    for row_index, cell in enumerate(ws.iter_rows(min_col=column_index, max_col=column_index, values_only=True), start=1):
+        if cell[0] is not None and isinstance(cell[0], (int, float)):
+            return row_index
+
+    # Return a default value or raise an exception if no numeric value is found
+    return None
+
 def plot_excel_data(plt, 
                     excel_path,
                     image_size, 
@@ -97,9 +106,13 @@ def plot_excel_data(plt,
         column_labels = []
 
         for time_column, label in time_columns.items():
-            column_times.append([cell[0].value for cell in ws.iter_rows(min_row=5, max_row=ws.max_row, min_col=time_column, max_col=time_column)])
+            
+            # Find the first row with data
+            first_row = find_first_numeric_row(ws, time_column )
+
+            column_times.append([cell[0].value for cell in ws.iter_rows(min_row=first_row, max_row=ws.max_row, min_col=time_column, max_col=time_column)])
             data_column = time_column + 1
-            column_data.append([cell[0].value for cell in ws.iter_rows(min_row=5, max_row=ws.max_row, min_col=data_column, max_col=data_column)])
+            column_data.append([cell[0].value for cell in ws.iter_rows(min_row=first_row, max_row=ws.max_row, min_col=data_column, max_col=data_column)])
             column_labels.append(label)
 
         # Create a line graph using matplotlib with custom figsize and tight layout.
@@ -174,7 +187,7 @@ def plot_excel_data(plt,
 
 
 plot_excel_data(plt,
-                r'C:\Users\avalonuser\Downloads\TP Medel olika kylvattentemp.xlsx',
+                r'C:\Users\avalonuser\Downloads\G7+vv+centrumvärme 4 cykler.xlsx',
                 image_size = [12, 8],
                 xes_to_highlight = [132],
                 draw_highlight_line = True,
