@@ -30,7 +30,6 @@ def find_closest_value(lst, target):
     """
     return min(lst, key=lambda x: abs(x - target))
 
-
 def find_first_numeric_row(ws, column_index):
     for row_index, cell in enumerate(ws.iter_rows(min_col=column_index, max_col=column_index, values_only=True), start=1):
         if cell[0] is not None and isinstance(cell[0], (int, float)):
@@ -41,7 +40,8 @@ def find_first_numeric_row(ws, column_index):
 
 def plot_excel_data(plt, 
                     excel_path,
-                    image_size, 
+                    image_size,
+                    colorMap = "",
                     xes_to_highlight = [], 
                     draw_highlight_line = True, 
                     use_grid = True, 
@@ -117,6 +117,11 @@ def plot_excel_data(plt,
 
         # Create a line graph using matplotlib with custom figsize and tight layout.
         plt.figure(figsize=(image_size[0], image_size[1]), tight_layout=True)
+        
+        # Set the default color cycle if the user have given us an input
+        if not (colorMap == ""):
+            plt.rcParams['axes.prop_cycle'] = plt.cycler(color=plt.cm.get_cmap(colorMap).colors)
+
 
         # Set font path
         font_path = r'C:\Users\avalonuser\Downloads\Montserrat\static\Montserrat-Regular.ttf'
@@ -128,8 +133,6 @@ def plot_excel_data(plt,
             x = [z for z in column_times[i] if z is not None]
             y = [z for z in column_data[i] if z is not None]
 
-            #x = column_times[i]
-            #y = column_data[i]
             plt.plot(x, y, label=column_labels[i])
 
             last_value = y[-1]
@@ -138,12 +141,11 @@ def plot_excel_data(plt,
 
         # Set the chart title and axis labels
         plt.title(filename)
-        print(filename)
 
         plt.xlabel('Time [s]', fontproperties=font, fontsize=axis_label_font_size)
         plt.ylabel('Temperature [°C]', fontproperties=font, fontsize=axis_label_font_size)
 
-        # Show the graph with the legend
+        # Show the graph with the legend    
         legend = plt.legend()
         plt.legend(loc='upper left') # Maybe want it somewhere else? However, it may overlap with the averages
         legend.get_frame().set_alpha(0.5)  # You can adjust the alpha (0.0 to 1.0) to control the level of transparency
@@ -188,7 +190,8 @@ def plot_excel_data(plt,
 
 plot_excel_data(plt,
                 r'C:\Users\avalonuser\Downloads\G7+vv+centrumvärme 4 cykler.xlsx',
-                image_size = [12, 8],
+                colorMap = "Set2",
+                image_size = [12, 6],
                 xes_to_highlight = [132],
                 draw_highlight_line = True,
                 use_grid = True,
