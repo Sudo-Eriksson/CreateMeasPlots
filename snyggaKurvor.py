@@ -108,12 +108,14 @@ def plot_excel_data(plt,
         for time_column, label in time_columns.items():
             
             # Find the first row with data
-            first_row = find_first_numeric_row(ws, time_column )
+            first_row = find_first_numeric_row(ws, time_column)
 
             column_times.append([cell[0].value for cell in ws.iter_rows(min_row=first_row, max_row=ws.max_row, min_col=time_column, max_col=time_column)])
             data_column = time_column + 1
             column_data.append([cell[0].value for cell in ws.iter_rows(min_row=first_row, max_row=ws.max_row, min_col=data_column, max_col=data_column)])
             column_labels.append(label)
+
+            print(first_row)
 
         # Create a line graph using matplotlib with custom figsize and tight layout.
         plt.figure(figsize=(image_size[0], image_size[1]), tight_layout=True)
@@ -127,6 +129,8 @@ def plot_excel_data(plt,
         font_path = r'C:\Users\avalonuser\Downloads\Montserrat\static\Montserrat-Regular.ttf'
         font = FontProperties(fname=font_path)
 
+        max_len = 0
+
         # Plot the data from the selected columns and use the labels from the right as the legend
         for i in range(len(column_data)):
 
@@ -138,6 +142,11 @@ def plot_excel_data(plt,
             last_value = y[-1]
             color = plt.gca().get_lines()[-1].get_color()
             plt.text(x[-1], last_value, str(int(last_value)), color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
+
+            # Get the longest series for plotting highlight y values
+            if max(x) > max_len:
+                max_len = max(x)
+
 
         # Set the chart title and axis labels
         plt.title(filename)
@@ -158,7 +167,7 @@ def plot_excel_data(plt,
             x_to_highlight = find_closest_value(x, x_to_highlight)
 
             # Print the y-values for all lines at the desired x-value
-            for i, x_value in enumerate(column_times[0]):  # Using the first column for x-values
+            for i, x_value in enumerate(x):  # Using the first column for x-values
                 if x_value == x_to_highlight:
                     for j, column_label in enumerate(column_labels):
                         y_value = column_data[j][i]
@@ -166,7 +175,9 @@ def plot_excel_data(plt,
                         text_y = 15 + (text_count * 8)  # Adjust vertical offset
 
                         color = plt.gca().get_lines()[j].get_color()
-                        plt.text(x_to_highlight + 2, text_y, f'{y_value:.3g}', color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
+
+                        # Place the text in relation to the line, and the length of our series.
+                        plt.text(x_to_highlight + (max_len*0.005), text_y, f'{y_value:.3g}', color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
                         text_count += 1
 
                         print(f'x={x_to_highlight:.3g}, y={y_value:.3g}')
@@ -189,13 +200,12 @@ def plot_excel_data(plt,
 
 
 plot_excel_data(plt,
-                r'C:\Users\avalonuser\Downloads\G7+vv+centrumvärme 4 cykler.xlsx',
+                r'C:\Users\avalonuser\Downloads\20 kW olika centrum och rh (1).xlsx',
                 colorMap = "Set2",
                 image_size = [12, 6],
-                xes_to_highlight = [132],
+                xes_to_highlight = [6.2],
                 draw_highlight_line = True,
                 use_grid = True,
                 savefig = True,
-                axis_label_font_size = 10,
-                text_font_size = 8)
- 
+                axis_label_font_size = 12,
+                text_font_size = 12)
