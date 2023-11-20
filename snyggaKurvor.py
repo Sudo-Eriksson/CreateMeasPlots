@@ -170,17 +170,21 @@ def plot_excel_data(plt,
             for i, x_value in enumerate(x):  # Using the first column for x-values
                 if x_value == x_to_highlight:
                     for j, column_label in enumerate(column_labels):
-                        y_value = column_data[j][i]
 
-                        text_y = 15 + (text_count * 8)  # Adjust vertical offset
+                        # This if is needed for handling xes to highlight larger than any of the series. Lists will contain Nones if there are a longer series.
+                        if column_data[j][i] != None:
 
-                        color = plt.gca().get_lines()[j].get_color()
+                            y_value = column_data[j][i]
 
-                        # Place the text in relation to the line, and the length of our series.
-                        plt.text(x_to_highlight + (max_len*0.005), text_y, f'{y_value:.3g}', color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
-                        text_count += 1
+                            text_y = 15 + (text_count * 8)  # Adjust vertical offset
 
-                        print(f'x={x_to_highlight:.3g}, y={y_value:.3g}')
+                            color = plt.gca().get_lines()[j].get_color()
+
+                            # Place the text in relation to the line, and the length of our series.
+                            plt.text(x_to_highlight + (max_len*0.005), text_y, f'{y_value:.3g}', color=color, va='bottom', fontproperties=font, fontsize=text_font_size)
+                            text_count += 1
+
+                            print(f'x={x_to_highlight:.3g}, y={y_value:.3g}')
 
             # Only draw the line if the user wants it
             if draw_highlight_line:
@@ -200,10 +204,10 @@ def plot_excel_data(plt,
 
 
 plot_excel_data(plt,
-                r'C:\Users\avalonuser\Downloads\20 kW olika centrum och rh (1).xlsx',
+                r'C:\Users\avalonuser\Downloads\Centrum flera cykler olika alt.xlsx',
                 colorMap = "Set2",
                 image_size = [12, 6],
-                xes_to_highlight = [6.2],
+                xes_to_highlight = [6.2, 64.7, 123.2, 181.7, 240.2],
                 draw_highlight_line = True,
                 use_grid = True,
                 savefig = True,
